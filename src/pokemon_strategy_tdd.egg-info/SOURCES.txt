@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+src/pokemon_game/__init__.py
+src/pokemon_game/pokemon.py
+src/pokemon_strategy_tdd.egg-info/PKG-INFO
+src/pokemon_strategy_tdd.egg-info/SOURCES.txt
+src/pokemon_strategy_tdd.egg-info/dependency_links.txt
+src/pokemon_strategy_tdd.egg-info/top_level.txt
+tests/test_pokemon.py
