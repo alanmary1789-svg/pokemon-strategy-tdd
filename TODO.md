@@ -15,8 +15,8 @@
 ## Attaques
 
 - [ ] Une attaque possède un nom et des dégâts
-- [ ] Un Pokémon peut utiliser une attaque contre un autre Pokémon
-- [ ] Une attaque réduit les PV du Pokémon ciblé
+- [x] Une attaque possède un nom et des dégâts
+- [x] Une attaque possède un type- [ ] Une attaque réduit les PV du Pokémon ciblé
 
 
 ## Types
@@ -44,6 +44,7 @@
 
 - [x] Créer une classe `Battle`
 - [x] Un combat possède une stratégie de calcul des dégâts
-- [x] Un Pokémon peut attaquer un adversaire pendant un combat
+- [x] Un Pokémon peut attaquer un adversaire pendant un com
 - [x] Le combat utilise sa stratégie pour calculer les dégâts
 - [x] Les dégâts calculés sont appliqués au Pokémon défenseur
+
