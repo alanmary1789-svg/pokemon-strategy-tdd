@@ -1,21 +1,24 @@
 from pokemon_game.pokemon import Pokemon 
+from pokemon_game.pokemon_type import PokemonType, TYPE_EFFECTIVENESS
+from pokemon_game.damage_strategy import TypeDamageStrategy
+from pokemon_game.attack import Attack
 
 def test_pokemon_starts_with_max_hp():
-    pikachu = Pokemon("pikachu", 100)
+    pikachu = Pokemon("pikachu", 100, PokemonType.ELECTRIC)
     assert pikachu.hp == pikachu.max_hp
 
 def test_pokemon_can_take_damage(): 
-    pikachu = Pokemon("pikachu", 100)
+    pikachu = Pokemon("pikachu", 100, PokemonType.ELECTRIC)
     pikachu.take_damage(30)
     assert pikachu.hp == 70
 
 def test_pokemon_hp_cannot_be_negative():
-    pikachu = Pokemon("pikachu", 100)
+    pikachu = Pokemon("pikachu", 100, PokemonType.ELECTRIC)
     pikachu.take_damage(150)
     assert pikachu.hp == 0
 
 def test_pokemon_is_ko_when_hp_reaches_zero():
-    pikachu = Pokemon("Pikachu", 100)
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
 
     pikachu.take_damage(100)
 
@@ -23,14 +26,14 @@ def test_pokemon_is_ko_when_hp_reaches_zero():
 
 
 def test_pokemon_is_not_ko_when_hp_remains():
-    pikachu = Pokemon("Pikachu", 100)
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
 
     pikachu.take_damage(50)
 
     assert not pikachu.is_ko()
 
 def test_pokemon_can_be_healed():
-    pikachu = Pokemon("Pikachu", 100)
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
     pikachu.take_damage(40)
 
     pikachu.heal(20)
@@ -39,9 +42,22 @@ def test_pokemon_can_be_healed():
 
 
 def test_pokemon_cannot_be_healed_above_max_hp():
-    pikachu = Pokemon("Pikachu", 100)
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
     pikachu.take_damage(20)
 
     pikachu.heal(50)
 
     assert pikachu.hp == 100
+
+
+def test_pokemon_attack_uses_damage_strategy():
+    charmander = Pokemon("Charmander", 100, PokemonType.FIRE)
+    bulbasaur = Pokemon("Bulbasaur", 100, PokemonType.GRASS)
+
+    strategy = TypeDamageStrategy()
+    ember = Attack("Ember", 20, PokemonType.FIRE)
+
+    charmander.attack(bulbasaur, ember, strategy)
+
+    assert bulbasaur.hp == 60
+
