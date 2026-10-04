@@ -2,16 +2,17 @@ from pokemon_game.damage_strategy import DamageStrategy
 from pokemon_game.weather import Weather
 from pokemon_game.damage_context import DamageContext
 from pokemon_game.damage_strategy import DamageStrategy 
-
+from pokemon_game.terrain import Terrain
 
 class Battle:
-    def __init__(self, damage_strategy : DamageStrategy, weather : Weather = Weather.CLEAR): 
+    def __init__(self, damage_strategy : DamageStrategy, weather : Weather = Weather.CLEAR, terrain = Terrain.NORMAL): 
         self.damage_strategy = damage_strategy
         self.weather = weather
+        self.terrain = terrain 
 
 
     def attack(self, attacker, defender, attack):
-        context = DamageContext(self.weather)
+        context = DamageContext(self.weather, self.terrain)
 
         damage = self.damage_strategy.calculate(attack, attacker, defender, context)
 

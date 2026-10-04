@@ -3,6 +3,9 @@ from pokemon_game.pokemon_type import PokemonType
 from pokemon_game.attack import Attack
 from pokemon_game.damage_strategy import DamageStrategy, ContextDamageStrategy, SimpleDamageStrategy
 from pokemon_game.damage_context import DamageContext
+from pokemon_game.battle import Battle
+from pokemon_game.terrain import Terrain 
+from pokemon_game.weather import Weather
 
 import pytest
 
@@ -56,3 +59,33 @@ def test_simple_damage_strategy_returns_base_damage():
 
     assert damage == 20
 
+
+
+def test_grassy_terrain_boosts_grass_damage():
+    bulbasaur = Pokemon("Bulbasaur", 100, PokemonType.GRASS)
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
+
+    vine_whip = Attack("Vine Whip", 20, PokemonType.GRASS)
+
+    battle = Battle(ContextDamageStrategy(), terrain=Terrain.GRASSY)
+
+    battle.attack(bulbasaur, pikachu, vine_whip)
+
+    assert pikachu.hp == 70
+
+
+def test_type_weather_and_terrain_are_combined():
+    bulbasaur = Pokemon("Bulbasaur", 100, PokemonType.GRASS)
+    charmander = Pokemon("Charmander", 100, PokemonType.FIRE)
+
+    vine_whip = Attack("Vine Whip", 20, PokemonType.GRASS)
+
+    battle = Battle(
+        ContextDamageStrategy(),
+        weather=Weather.RAIN,
+        terrain=Terrain.GRASSY
+    )
+
+    battle.attack(bulbasaur, charmander, vine_whip)
+
+    assert charmander.hp == 85

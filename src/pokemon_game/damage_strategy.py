@@ -1,5 +1,7 @@
 from pokemon_game.pokemon_type import TYPE_EFFECTIVENESS
 from pokemon_game.weather import WEATHER_EFFECTIVENESS
+from pokemon_game.terrain import TERRAIN_EFFECTIVENESS
+
 from abc import ABC, abstractmethod
 
 
@@ -15,7 +17,9 @@ class ContextDamageStrategy(DamageStrategy):
 
         weather_multiplier = WEATHER_EFFECTIVENESS[context.weather].get(attack.type, 1)
 
-        return attack.damage * type_multiplier * weather_multiplier 
+        terrain_multiplier = TERRAIN_EFFECTIVENESS[context.terrain].get(attack.type, 1)
+
+        return attack.damage * type_multiplier * weather_multiplier * terrain_multiplier 
 
 
 class SimpleDamageStrategy(DamageStrategy):

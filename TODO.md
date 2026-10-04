@@ -60,10 +60,11 @@
 ## Météo
 
 - [x] Définir les différentes météos
-- [ ] Un combat peut avoir une météo
-- [ ] Sous la pluie, les attaques WATER sont renforcées
-- [ ] Sous la pluie, les attaques FIRE sont affaiblies
-- [ ] Sous le soleil, les attaques FIRE sont renforcées
-- [ ] Sous le soleil, les attaques WATER sont affaiblies
-- [ ] Une météo neutre ne modifie pas les dégâts
-- [ ] Combiner ultérieurement météo et efficacité des types
+- [x] Un combat peut avoir une météo
+- [x] Sous la pluie, les attaques WATER sont renforcées
+- [x] Sous la pluie, les attaques FIRE sont affaiblies
+- [x] Sous le soleil, les attaques FIRE sont renforcées
+- [x] Sous le soleil, les attaques WATER sont affaiblies
+- [x] Une météo neutre ne modifie pas les dégâts
+- [x] Combiner ultérieurement météo et efficacité des types
+
