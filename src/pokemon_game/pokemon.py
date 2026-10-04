@@ -5,11 +5,12 @@ class Pokemon:
     hp : int 
     type : PokemonType
 
-    def __init__(self, name : str, max_hp : int, pokemon_type : PokemonType):
+    def __init__(self, name : str, max_hp : int, pokemon_type : PokemonType, attacks = None):
         self.max_hp = max_hp
         self.name = name 
         self.hp = max_hp
-        self.type = pokemon_type    
+        self.type = pokemon_type 
+        self.attacks = attacks if attacks is not None else []
 
     def take_damage(self, damage : int):
         if self.hp > damage :
