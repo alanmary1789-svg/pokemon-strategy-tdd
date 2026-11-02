@@ -3,6 +3,8 @@ from pokemon_game.player import Player
 from pokemon_game.pokemon import Pokemon
 from pokemon_game.pokemon_type import PokemonType
 from pokemon_game.attack import Attack 
+from pokemon_game.battle import Battle 
+from pokemon_game.damage_strategy import ContextDamageStrategy 
 
 
 def test_game_is_over_when_a_pokemon_is_ko():
@@ -12,7 +14,7 @@ def test_game_is_over_when_a_pokemon_is_ko():
     player1 = Player("Alan", pikachu)
     player2 = Player("Opponent", bulbasaur)
 
-    game = Game(player1, player2)
+    game = Game(player1, player2, Battle(ContextDamageStrategy()))
 
     bulbasaur.take_damage(100)
 
@@ -25,7 +27,7 @@ def test_game_is_not_over_while_both_pokemon_are_alive():
     player1 = Player("Alan", pikachu)
     player2 = Player("Opponent", bulbasaur)
 
-    game = Game(player1, player2)
+    game = Game(player1, player2, Battle(ContextDamageStrategy()))
 
     assert not game.is_over()
 
@@ -53,3 +55,29 @@ def test_pokemon_has_no_attacks_by_default():
     )
 
     assert pikachu.attacks == []
+
+def test_invalid_attack_choice_does_not_crash(monkeypatch):
+    pikachu = Pokemon(
+        "Pikachu",
+        100,
+        PokemonType.ELECTRIC,
+        [Attack("Thunderbolt", 20, PokemonType.ELECTRIC)]
+    )
+
+    bulbasaur = Pokemon("Bulbasaur", 100, PokemonType.GRASS)
+
+    player1 = Player("Alan", pikachu)
+    player2 = Player("Opponent", bulbasaur)
+
+    game = Game(
+        player1,
+        player2,
+        Battle(ContextDamageStrategy())
+    )
+
+    monkeypatch.setattr("builtins.input", lambda _: "abc")
+
+    result = game.choose_attack(player1, player2)
+
+    assert result is False
+    assert bulbasaur.hp == 100

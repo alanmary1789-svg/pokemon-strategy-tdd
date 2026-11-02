@@ -35,30 +35,50 @@ class Game:
             choice = input("> ")
 
             if choice == "1":
-                self.choose_attack(current_player, opponent)
+                action_successful = self.choose_attack(current_player, opponent)
 
             elif choice == "2":
-                self.use_potion(current_player)
+                action_successful = self.use_potion(current_player)
 
             else:
                 print("Choix invalide.")
                 continue
 
-            current_player, opponent = opponent, current_player
+            if not action_successful:
+                continue
 
+            if self.is_over():
+                break
+
+            current_player, opponent = opponent, current_player
         self.display_winner()
 
 
     def choose_attack(self, current_player, opponent):
         pokemon = current_player.pokemon
 
+        if not pokemon.attacks:
+            print("Ce Pokémon ne possède aucune attaque.")
+            return False
+
         print("Choisis une attaque :")
 
         for index, attack in enumerate(pokemon.attacks, start=1):
             print(f"{index}. {attack.name}")
 
-        choice = int(input("> "))
-        attack = pokemon.attacks[choice - 1]
+        choice = input("> ")
+
+        try:
+            index = int(choice) - 1
+        except ValueError:
+            print("Veuillez entrer un nombre.")
+            return False
+
+        if not 0 <= index < len(pokemon.attacks):
+            print("Cette attaque n'existe pas.")
+            return False
+
+        attack = pokemon.attacks[index]
 
         print(f"{pokemon.name} utilise {attack.name} !")
 
@@ -67,6 +87,8 @@ class Game:
             opponent.pokemon,
             attack
         )
+
+        return True
 
     def use_potion(self, player):
         if not player.potions:
