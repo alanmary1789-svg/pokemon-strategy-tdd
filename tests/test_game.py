@@ -32,28 +32,6 @@ def test_game_is_not_over_while_both_pokemon_are_alive():
 
     assert not game.is_over()
 
-def test_pokemon_can_have_attacks():
-    thunderbolt = Attack(
-        "Thunderbolt",
-        20,
-        PokemonType.ELECTRIC
-    )
-
-    pikachu = Pokemon(
-        "Pikachu",
-        100,
-        PokemonType.ELECTRIC,
-        [thunderbolt]
-    )
-
-    assert pikachu.attacks == [thunderbolt]
-
-def test_pokemon_has_no_attacks_by_default():
-    pikachu = Pokemon(
-        "Pikachu",
-        100,
-        PokemonType.ELECTRIC
-    )
 
     assert pikachu.attacks == []
 
@@ -103,3 +81,114 @@ def test_using_potion_at_full_hp_does_not_consume_turn():
     assert result is False
     assert pikachu.hp == 100
     assert potion in player1.potions
+
+def test_invalid_action_does_not_skip_player_turn(monkeypatch):
+    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
+    ember = Attack("Ember", 100, PokemonType.FIRE)
+
+    pikachu = Pokemon(
+        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
+    )
+    charmander = Pokemon(
+        "Charmander", 100, PokemonType.FIRE, [ember]
+    )
+
+    player1 = Player("Alan", pikachu)
+    player2 = Player("Opponent", charmander)
+
+    game = Game(
+        player1,
+        player2,
+        Battle(ContextDamageStrategy())
+    )
+
+    # Alan saisit une action invalide, puis attaque.
+    # Ensuite, l'adversaire attaque et termine le combat.
+    inputs = iter(["abc", "1", "1", "1", "1"])
+
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(inputs)
+    )
+
+    game.play()
+
+    assert charmander.hp == 80
+    assert pikachu.is_ko()
+
+
+def test_invalid_attack_selection_does_not_skip_turn(monkeypatch):
+    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
+    ember = Attack("Ember", 100, PokemonType.FIRE)
+
+    pikachu = Pokemon(
+        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
+    )
+    charmander = Pokemon(
+        "Charmander", 100, PokemonType.FIRE, [ember]
+    )
+
+    player1 = Player("Alan", pikachu)
+    player2 = Player("Opponent", charmander)
+
+    game = Game(
+        player1,
+        player2,
+        Battle(ContextDamageStrategy())
+    )
+
+    # Alan choisit Attaquer, puis une attaque inexistante.
+    # Il peut ensuite recommencer son tour.
+    inputs = iter(["1", "99", "1", "1", "1", "1"])
+
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(inputs)
+    )
+
+    game.play()
+
+    assert charmander.hp == 80
+    assert pikachu.is_ko()
+
+def test_game_stops_immediately_after_ko(monkeypatch, capsys):
+    thunderbolt = Attack("Thunderbolt", 100, PokemonType.ELECTRIC)
+
+    pikachu = Pokemon(
+        "Pikachu",
+        100,
+        PokemonType.ELECTRIC,
+        [thunderbolt]
+    )
+
+    charmander = Pokemon(
+        "Charmander",
+        100,
+        PokemonType.FIRE
+    )
+
+    player1 = Player("Alan", pikachu)
+    player2 = Player("Opponent", charmander)
+
+    game = Game(
+        player1,
+        player2,
+        Battle(ContextDamageStrategy())
+    )
+
+    inputs = iter(["1", "1"])
+
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(inputs)
+    )
+
+    game.play()
+
+    output = capsys.readouterr().out
+
+    assert charmander.is_ko()
+    assert pikachu.hp == 100
+    assert "Alan gagne le combat !" in output
+    assert "--- Tour de Opponent ---" not in output
+

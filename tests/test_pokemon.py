@@ -67,71 +67,25 @@ def test_pokemon_attack_uses_damage_strategy():
 
 """
 
-def test_invalid_action_does_not_skip_player_turn(monkeypatch):
-    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
-    ember = Attack("Ember", 100, PokemonType.FIRE)
+def test_pokemon_can_have_attacks():
+    thunderbolt = Attack(
+        "Thunderbolt",
+        20,
+        PokemonType.ELECTRIC
+    )
 
     pikachu = Pokemon(
-        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
-    )
-    charmander = Pokemon(
-        "Charmander", 100, PokemonType.FIRE, [ember]
-    )
-
-    player1 = Player("Alan", pikachu)
-    player2 = Player("Opponent", charmander)
-
-    game = Game(
-        player1,
-        player2,
-        Battle(ContextDamageStrategy())
+        "Pikachu",
+        100,
+        PokemonType.ELECTRIC,
+        [thunderbolt]
     )
 
-    # Alan saisit une action invalide, puis attaque.
-    # Ensuite, l'adversaire attaque et termine le combat.
-    inputs = iter(["abc", "1", "1", "1", "1"])
+    assert pikachu.attacks == [thunderbolt]
 
-    monkeypatch.setattr(
-        "builtins.input",
-        lambda _: next(inputs)
-    )
-
-    game.play()
-
-    assert charmander.hp == 80
-    assert pikachu.is_ko()
-
-
-def test_invalid_attack_selection_does_not_skip_turn(monkeypatch):
-    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
-    ember = Attack("Ember", 100, PokemonType.FIRE)
-
+def test_pokemon_has_no_attacks_by_default():
     pikachu = Pokemon(
-        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
+        "Pikachu",
+        100,
+        PokemonType.ELECTRIC
     )
-    charmander = Pokemon(
-        "Charmander", 100, PokemonType.FIRE, [ember]
-    )
-
-    player1 = Player("Alan", pikachu)
-    player2 = Player("Opponent", charmander)
-
-    game = Game(
-        player1,
-        player2,
-        Battle(ContextDamageStrategy())
-    )
-
-    # Alan choisit Attaquer, puis une attaque inexistante.
-    # Il peut ensuite recommencer son tour.
-    inputs = iter(["1", "99", "1", "1", "1", "1"])
-
-    monkeypatch.setattr(
-        "builtins.input",
-        lambda _: next(inputs)
-    )
-
-    game.play()
-
-    assert charmander.hp == 80
-    assert pikachu.is_ko()

@@ -89,3 +89,20 @@ def test_type_weather_and_terrain_are_combined():
     battle.attack(bulbasaur, charmander, vine_whip)
 
     assert charmander.hp == 85
+
+
+def test_simple_strategy_ignores_combat_conditions():
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
+    squirtle = Pokemon("Squirtle", 100, PokemonType.WATER)
+
+    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
+
+    battle = Battle(
+        SimpleDamageStrategy(),
+        weather=Weather.RAIN,
+        terrain=Terrain.ELECTRIC
+    )
+
+    battle.attack(pikachu, squirtle, thunderbolt)
+
+    assert squirtle.hp == 80

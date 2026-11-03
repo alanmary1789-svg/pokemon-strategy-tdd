@@ -93,7 +93,7 @@ class Game:
     def use_potion(self, player):
         if not player.potions:
             print("Aucune potion disponible.")
-            return
+            return False
 
         potion = player.potions[0]
 
