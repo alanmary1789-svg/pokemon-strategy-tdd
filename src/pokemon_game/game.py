@@ -97,11 +97,14 @@ class Game:
 
         potion = player.potions[0]
 
-        player.use_potion(potion)
+        try:
+            player.use_potion(potion)
+        except ValueError as error:
+            print(error)
+            return False 
 
-        print(
-            f"{player.pokemon.name} utilise {potion.name} !"
-        )
+        print(f"{player.pokemon.name} utilise {potion.name}")
+        return True
 
     def display_winner(self):
         if self.player1.pokemon.is_ko():

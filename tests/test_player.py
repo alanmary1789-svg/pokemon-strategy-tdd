@@ -1,3 +1,5 @@
+import pytest
+
 from pokemon_game.player import Player
 from pokemon_game.pokemon import Pokemon
 from pokemon_game.pokemon_type import PokemonType
@@ -24,3 +26,30 @@ def test_player_uses_and_consumes_potion():
 
     assert pikachu.hp == 70
     assert potion not in player.potions
+
+def test_player_cannot_use_potion_not_in_inventory():
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC) 
+    pikachu.take_damage(50)
+
+    player = Player("Alan", pikachu)
+    potion = Potion("Potion", 20)
+
+    with pytest.raises(ValueError):
+        player.use_potion(potion)
+
+    assert pikachu.hp == 50 
+    assert player.potions == [] 
+
+def test_player_cannot_waste_potion_at_full_hp():
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
+    potion = Potion("Potion", 20)
+
+    player = Player("Alan", pikachu, [potion])
+
+    with pytest.raises(ValueError):
+        player.use_potion(potion)
+
+    assert pikachu.hp == 100
+    assert potion in player.potions
+    
+

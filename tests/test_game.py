@@ -5,6 +5,7 @@ from pokemon_game.pokemon_type import PokemonType
 from pokemon_game.attack import Attack 
 from pokemon_game.battle import Battle 
 from pokemon_game.damage_strategy import ContextDamageStrategy 
+from pokemon_game.potion import Potion
 
 
 def test_game_is_over_when_a_pokemon_is_ko():
@@ -81,3 +82,24 @@ def test_invalid_attack_choice_does_not_crash(monkeypatch):
 
     assert result is False
     assert bulbasaur.hp == 100
+
+def test_using_potion_at_full_hp_does_not_consume_turn():
+    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
+    bulbasaur = Pokemon("Bulbasaur", 100, PokemonType.GRASS)
+
+    potion = Potion("Potion", 20)
+
+    player1 = Player("Alan", pikachu, [potion])
+    player2 = Player("Opponent", bulbasaur)
+
+    game = Game(
+        player1,
+        player2,
+        Battle(ContextDamageStrategy())
+    )
+
+    result = game.use_potion(player1)
+
+    assert result is False
+    assert pikachu.hp == 100
+    assert potion in player1.potions
