@@ -192,3 +192,88 @@ def test_game_stops_immediately_after_ko(monkeypatch, capsys):
     assert "Alan gagne le combat !" in output
     assert "--- Tour de Opponent ---" not in output
 
+from pokemon_game.computer_player import ComputerPlayer
+from pokemon_game.attack_strategy import StrongestAttackStrategy
+from pokemon_game.damage_calculator import DamageCalculator
+
+def test_computer_player_attacks_without_user_input(monkeypatch, capsys):
+    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
+    ember = Attack("Ember", 100, PokemonType.FIRE)
+
+    pikachu = Pokemon(
+        "Pikachu",
+        100,
+        PokemonType.ELECTRIC,
+        [thunderbolt]
+    )
+
+    charmander = Pokemon(
+        "Charmander",
+        100,
+        PokemonType.FIRE,
+        [ember]
+    )
+
+    human = Player("Alan", pikachu)
+
+    computer = ComputerPlayer(
+        "Adversaire",
+        charmander,
+        StrongestAttackStrategy()
+    )
+
+    game = Game(
+        human,
+        computer,
+        Battle(DamageCalculator())
+    )
+
+    # Les seules saisies autorisées sont celles du joueur humain.
+    inputs = iter(["1", "1"])
+
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(inputs)
+    )
+
+    game.play()
+
+    output = capsys.readouterr().out
+
+    assert pikachu.is_ko()
+    assert charmander.hp == 80
+    assert "Charmander utilise Ember !" in output
+
+def test_choose_attack_displays_damage_and_remaining_hp(
+    monkeypatch, capsys
+):
+    thunderbolt = Attack(
+        "Thunderbolt", 20, PokemonType.ELECTRIC
+    )
+
+    pikachu = Pokemon(
+        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
+    )
+
+    squirtle = Pokemon(
+        "Squirtle", 100, PokemonType.WATER
+    )
+
+    player1 = Player("Alan", pikachu)
+    player2 = Player("Opponent", squirtle)
+
+    game = Game(
+        player1,
+        player2,
+        Battle(DamageCalculator())
+    )
+
+    monkeypatch.setattr("builtins.input", lambda _: "1")
+
+    game.choose_attack(player1, player2)
+
+    output = capsys.readouterr().out
+
+    assert "Pikachu utilise Thunderbolt !" in output
+    assert "Squirtle subit 40 dégâts !" in output
+    assert "Squirtle : 60/100 PV" in output

@@ -1,5 +1,5 @@
 from pokemon_game.battle import Battle
-
+from pokemon_game.computer_player import ComputerPlayer
 
 class Game:
     def __init__(self, player1, player2, battle):
@@ -29,20 +29,44 @@ class Game:
                 f"{opponent.pokemon.hp}/{opponent.pokemon.max_hp} HP"
             )
 
-            print("1. Attaquer")
-            print("2. Utiliser une potion")
+            if isinstance(current_player, ComputerPlayer):
+                attack = current_player.choose_attack(
+                    opponent.pokemon,
+                    self.battle
+                )
 
-            choice = input("> ")
+                print(
+                    f"{current_player.pokemon.name} utilise {attack.name} !"
+                )
 
-            if choice == "1":
-                action_successful = self.choose_attack(current_player, opponent)
+                self.battle.attack(
+                    current_player.pokemon,
+                    opponent.pokemon,
+                    attack
+                )
 
-            elif choice == "2":
-                action_successful = self.use_potion(current_player)
+                action_successful = True
 
             else:
-                print("Choix invalide.")
-                continue
+                print("1. Attaquer")
+                print("2. Utiliser une potion")
+
+                choice = input("> ")
+
+                if choice == "1":
+                    action_successful = self.choose_attack(
+                        current_player,
+                        opponent
+                    )
+
+                elif choice == "2":
+                    action_successful = self.use_potion(
+                        current_player
+                    )
+
+                else:
+                    print("Choix invalide.")
+                    continue
 
             if not action_successful:
                 continue
@@ -51,8 +75,8 @@ class Game:
                 break
 
             current_player, opponent = opponent, current_player
-        self.display_winner()
 
+        self.display_winner()
 
     def choose_attack(self, current_player, opponent):
         pokemon = current_player.pokemon
@@ -80,11 +104,9 @@ class Game:
 
         attack = pokemon.attacks[index]
 
-        print(f"{pokemon.name} utilise {attack.name} !")
-
-        self.battle.attack(
-            pokemon,
-            opponent.pokemon,
+        self.execute_attack(
+            current_player,
+            opponent,
             attack
         )
 
@@ -114,3 +136,18 @@ class Game:
 
         print()
         print(f"{winner.name} gagne le combat !")
+
+    def execute_attack(self, attacker, defender, attack):
+        print(f"{attacker.pokemon.name} utilise {attack.name} !")
+
+        damage = self.battle.attack(
+            attacker.pokemon,
+            defender.pokemon,
+            attack
+        )
+
+        print(f"{defender.pokemon.name} subit {damage:g} dégâts !")
+        print(
+            f"{defender.pokemon.name} : "
+            f"{defender.pokemon.hp:g}/{defender.pokemon.max_hp:g} PV"
+        )

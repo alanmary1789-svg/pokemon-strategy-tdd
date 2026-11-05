@@ -8,6 +8,8 @@ from pokemon_game.pokemon_type import PokemonType
 from pokemon_game.potion import Potion
 from pokemon_game.weather import Weather
 from pokemon_game.terrain import Terrain
+from pokemon_game.computer_player import ComputerPlayer
+from pokemon_game.difficulty_selector import choose_difficulty
 
 
 thunderbolt = Attack(
@@ -37,14 +39,17 @@ charmander = Pokemon(
 )
 
 player1 = Player(
-    "Alan",
+    "Alan", 
     pikachu,
     [Potion("Potion", 20)]
 )
 
-player2 = Player(
+strategy = choose_difficulty()
+
+player2 = ComputerPlayer(
     "Adversaire",
     charmander,
+    strategy,
     [Potion("Potion", 20)]
 )
 

@@ -18,7 +18,16 @@ class Battle:
         return self.damage_calculator.calculate(attack, attacker, defender, context) 
 
     def attack(self, attacker, defender, attack):
+        damage = self.calculate_damage(
+            attacker,
+            defender,
+            attack
+        )
 
-        damage = self.calculate_damage(attacker, defender, attack)
+        hp_before = defender.hp
 
         defender.take_damage(damage)
+
+        actual_damage = hp_before - defender.hp
+
+        return actual_damage

@@ -47,3 +47,33 @@ def test_calculate_damage_does_not_modify_defender_hp():
 
     assert damage == 40
     assert squirtle.hp == 100
+
+def test_battle_attack_returns_actual_damage():
+    pikachu = Pokemon(
+        "Pikachu",
+        100,
+        PokemonType.ELECTRIC
+    )
+
+    squirtle = Pokemon(
+        "Squirtle",
+        15,
+        PokemonType.WATER
+    )
+
+    thunderbolt = Attack(
+        "Thunderbolt",
+        20,
+        PokemonType.ELECTRIC
+    )
+
+    battle = Battle(DamageCalculator())
+
+    damage = battle.attack(
+        pikachu,
+        squirtle,
+        thunderbolt
+    )
+
+    assert damage == 15
+    assert squirtle.hp == 0
