@@ -31,19 +31,15 @@ class Game:
 
             if isinstance(current_player, ComputerPlayer):
                 attack = current_player.choose_attack(
-                    opponent.pokemon,
-                    self.battle
+                opponent.pokemon,
+                self.battle
                 )
 
-                print(
-                    f"{current_player.pokemon.name} utilise {attack.name} !"
-                )
-
-                self.battle.attack(
-                    current_player.pokemon,
-                    opponent.pokemon,
-                    attack
-                )
+                self.execute_attack(
+                current_player,
+                opponent,
+                attack
+                )   
 
                 action_successful = True
 
