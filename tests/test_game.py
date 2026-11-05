@@ -4,7 +4,7 @@ from pokemon_game.pokemon import Pokemon
 from pokemon_game.pokemon_type import PokemonType
 from pokemon_game.attack import Attack 
 from pokemon_game.battle import Battle 
-from pokemon_game.damage_strategy import ContextDamageStrategy 
+from pokemon_game.damage_calculator import DamageCalculator
 from pokemon_game.potion import Potion
 
 
@@ -15,7 +15,7 @@ def test_game_is_over_when_a_pokemon_is_ko():
     player1 = Player("Alan", pikachu)
     player2 = Player("Opponent", bulbasaur)
 
-    game = Game(player1, player2, Battle(ContextDamageStrategy()))
+    game = Game(player1, player2, Battle(DamageCalculator()))
 
     bulbasaur.take_damage(100)
 
@@ -28,7 +28,7 @@ def test_game_is_not_over_while_both_pokemon_are_alive():
     player1 = Player("Alan", pikachu)
     player2 = Player("Opponent", bulbasaur)
 
-    game = Game(player1, player2, Battle(ContextDamageStrategy()))
+    game = Game(player1, player2, Battle(DamageCalculator()))
 
     assert not game.is_over()
 
@@ -51,7 +51,7 @@ def test_invalid_attack_choice_does_not_crash(monkeypatch):
     game = Game(
         player1,
         player2,
-        Battle(ContextDamageStrategy())
+        Battle(DamageCalculator())
     )
 
     monkeypatch.setattr("builtins.input", lambda _: "abc")
@@ -73,7 +73,7 @@ def test_using_potion_at_full_hp_does_not_consume_turn():
     game = Game(
         player1,
         player2,
-        Battle(ContextDamageStrategy())
+        Battle(DamageCalculator())
     )
 
     result = game.use_potion(player1)
@@ -99,7 +99,7 @@ def test_invalid_action_does_not_skip_player_turn(monkeypatch):
     game = Game(
         player1,
         player2,
-        Battle(ContextDamageStrategy())
+        Battle(DamageCalculator())
     )
 
     # Alan saisit une action invalide, puis attaque.
@@ -134,7 +134,7 @@ def test_invalid_attack_selection_does_not_skip_turn(monkeypatch):
     game = Game(
         player1,
         player2,
-        Battle(ContextDamageStrategy())
+        Battle(DamageCalculator())
     )
 
     # Alan choisit Attaquer, puis une attaque inexistante.
@@ -173,7 +173,7 @@ def test_game_stops_immediately_after_ko(monkeypatch, capsys):
     game = Game(
         player1,
         player2,
-        Battle(ContextDamageStrategy())
+        Battle(DamageCalculator())
     )
 
     inputs = iter(["1", "1"])

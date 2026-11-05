@@ -1,6 +1,4 @@
 from pokemon_game.pokemon_type import PokemonType
-from pokemon_game.damage_context import DamageContext
-from pokemon_game.damage_strategy import DamageStrategy 
 
 class Attack:
     type : PokemonType
@@ -16,7 +14,6 @@ class Attack:
         attack,
         attacker,
         defender,
-        context
      )
 
         defender.take_damage(damage)

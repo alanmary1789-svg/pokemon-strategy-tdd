@@ -1,6 +1,5 @@
 from pokemon_game.pokemon import Pokemon 
 from pokemon_game.pokemon_type import PokemonType, TYPE_EFFECTIVENESS
-from pokemon_game.damage_strategy import ContextDamageStrategy
 from pokemon_game.attack import Attack
 from pokemon_game.game import Game
 from pokemon_game.player import Player

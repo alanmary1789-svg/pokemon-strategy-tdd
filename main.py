@@ -1,6 +1,6 @@
 from pokemon_game.attack import Attack
 from pokemon_game.battle import Battle
-from pokemon_game.damage_strategy import ContextDamageStrategy
+from pokemon_game.damage_calculator import DamageCalculator
 from pokemon_game.game import Game
 from pokemon_game.player import Player
 from pokemon_game.pokemon import Pokemon
@@ -49,7 +49,7 @@ player2 = Player(
 )
 
 battle = Battle(
-    ContextDamageStrategy(),
+    DamageCalculator(),
     weather=Weather.CLEAR,
     terrain=Terrain.NORMAL
 )

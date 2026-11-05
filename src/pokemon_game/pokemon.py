@@ -1,5 +1,4 @@
 from pokemon_game.pokemon_type import PokemonType
-from pokemon_game.damage_strategy import DamageStrategy
 
 class Pokemon:
     hp : int 

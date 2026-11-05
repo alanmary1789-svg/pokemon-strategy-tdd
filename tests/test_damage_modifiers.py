@@ -1,7 +1,7 @@
 from pokemon_game.pokemon import Pokemon
 from pokemon_game.pokemon_type import PokemonType
 from pokemon_game.attack import Attack
-from pokemon_game.damage_strategy import DamageStrategy, ContextDamageStrategy, SimpleDamageStrategy
+from pokemon_game.damage_calculator import DamageCalculator
 from pokemon_game.damage_context import DamageContext
 from pokemon_game.battle import Battle
 from pokemon_game.terrain import Terrain 
@@ -11,18 +11,14 @@ import pytest
 
 context = DamageContext()
 
-def test_damage_strategy_cannot_be_instantiated():
-    with pytest.raises(TypeError):
-        DamageStrategy()
-
 def test_resistant_type_halves_attack_damage():
     pikachu = Pokemon("pikachu", 100, PokemonType.ELECTRIC)
     bulbasaur = Pokemon("bulbasor", 100, PokemonType.GRASS)
     foudre = Attack("foudre", 20, PokemonType.ELECTRIC)
 
-    strategy = ContextDamageStrategy()
+    calculator = DamageCalculator()
 
-    damage = strategy.calculate(foudre, pikachu, bulbasaur, context)
+    damage = calculator.calculate(foudre, pikachu, bulbasaur, context)
 
     assert damage == 10
 
@@ -32,8 +28,8 @@ def test_super_effective_attack_doubles_damage():
 
     ember = Attack("Ember", 20, PokemonType.FIRE)
 
-    strategy = ContextDamageStrategy()
-    damage = strategy.calculate(ember, charmander, bulbasaur, context)
+    calculator = DamageCalculator()
+    damage = calculator.calculate(ember, charmander, bulbasaur, context)
 
     assert damage == 40
 
@@ -42,23 +38,10 @@ def test_neutral_type_keeps_normal_damage():
     pikachu = Pokemon("pikachu", 100, PokemonType.ELECTRIC)
 
     ember = Attack("Ember", 20, PokemonType.FIRE)
-    strategy = ContextDamageStrategy()
-    damage = strategy.calculate(ember, charmander, pikachu, context)
+    calculator = DamageCalculator()
+    damage = calculator.calculate(ember, charmander, pikachu, context)
 
     assert damage == 20
-
-
-def test_simple_damage_strategy_returns_base_damage():
-    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
-    bulbasaur = Pokemon("Bulbasaur", 100, PokemonType.GRASS)
-    thunder_shock = Attack("Thunder Shock", 20, PokemonType.ELECTRIC)
-
-    strategy = SimpleDamageStrategy()
-
-    damage = strategy.calculate(thunder_shock, pikachu, bulbasaur, context)
-
-    assert damage == 20
-
 
 
 def test_grassy_terrain_boosts_grass_damage():
@@ -67,7 +50,7 @@ def test_grassy_terrain_boosts_grass_damage():
 
     vine_whip = Attack("Vine Whip", 20, PokemonType.GRASS)
 
-    battle = Battle(ContextDamageStrategy(), terrain=Terrain.GRASSY)
+    battle = Battle(DamageCalculator(), terrain=Terrain.GRASSY)
 
     battle.attack(bulbasaur, pikachu, vine_whip)
 
@@ -81,7 +64,7 @@ def test_type_weather_and_terrain_are_combined():
     vine_whip = Attack("Vine Whip", 20, PokemonType.GRASS)
 
     battle = Battle(
-        ContextDamageStrategy(),
+        DamageCalculator(),
         weather=Weather.RAIN,
         terrain=Terrain.GRASSY
     )
@@ -91,18 +74,3 @@ def test_type_weather_and_terrain_are_combined():
     assert charmander.hp == 85
 
 
-def test_simple_strategy_ignores_combat_conditions():
-    pikachu = Pokemon("Pikachu", 100, PokemonType.ELECTRIC)
-    squirtle = Pokemon("Squirtle", 100, PokemonType.WATER)
-
-    thunderbolt = Attack("Thunderbolt", 20, PokemonType.ELECTRIC)
-
-    battle = Battle(
-        SimpleDamageStrategy(),
-        weather=Weather.RAIN,
-        terrain=Terrain.ELECTRIC
-    )
-
-    battle.attack(pikachu, squirtle, thunderbolt)
-
-    assert squirtle.hp == 80
