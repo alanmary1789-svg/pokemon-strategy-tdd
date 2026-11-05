@@ -1,5 +1,7 @@
 from pokemon_game.battle import Battle
 from pokemon_game.computer_player import ComputerPlayer
+from pokemon_game.weather import Weather
+from pokemon_game.terrain import Terrain
 
 class Game:
     def __init__(self, player1, player2, battle):
@@ -20,6 +22,9 @@ class Game:
         while not self.is_over():
             print()
             print(f"--- Tour de {current_player.name} ---")
+
+            self.display_conditions()
+
             print(
                 f"{current_player.pokemon.name}: "
                 f"{current_player.pokemon.hp}/{current_player.pokemon.max_hp} HP"
@@ -147,3 +152,20 @@ class Game:
             f"{defender.pokemon.name} : "
             f"{defender.pokemon.hp:g}/{defender.pokemon.max_hp:g} PV"
         )
+
+    def display_conditions(self):
+        weather_labels = {
+            Weather.CLEAR: "Ciel dégagé",
+            Weather.RAIN: "Pluie",
+            Weather.SUN: "Soleil"
+        }
+
+        terrain_labels = {
+            Terrain.NORMAL: "Normal",
+            Terrain.GRASSY: "Herbeux",
+            Terrain.ELECTRIC: "Électrique"
+        }
+
+        print()
+        print(f"Météo : {weather_labels[self.battle.weather]}")
+        print(f"Terrain : {terrain_labels[self.battle.terrain]}")

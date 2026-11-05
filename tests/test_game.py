@@ -277,3 +277,43 @@ def test_choose_attack_displays_damage_and_remaining_hp(
     assert "Pikachu utilise Thunderbolt !" in output
     assert "Squirtle subit 40 dégâts !" in output
     assert "Squirtle : 60/100 PV" in output
+
+from pokemon_game.weather import Weather
+from pokemon_game.terrain import Terrain
+
+def test_game_displays_weather_and_terrain(monkeypatch, capsys):
+    thunderbolt = Attack(
+        "Thunderbolt", 100, PokemonType.ELECTRIC
+    )
+
+    pikachu = Pokemon(
+        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
+    )
+
+    charmander = Pokemon(
+        "Charmander", 100, PokemonType.FIRE
+    )
+
+    player1 = Player("Alan", pikachu)
+    player2 = Player("Opponent", charmander)
+
+    battle = Battle(
+        DamageCalculator(),
+        weather=Weather.SUN,
+        terrain=Terrain.GRASSY
+    )
+
+    game = Game(player1, player2, battle)
+
+    inputs = iter(["1", "1"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(inputs)
+    )
+
+    game.play()
+
+    output = capsys.readouterr().out
+
+    assert "Météo : Soleil" in output
+    assert "Terrain : Herbeux" in output
