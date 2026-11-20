@@ -20,19 +20,7 @@ class Game:
         opponent = self.player2
 
         while not self.is_over():
-            print()
-            print(f"--- Tour de {current_player.name} ---")
-
-            self.display_conditions()
-
-            print(
-                f"{current_player.pokemon.name}: "
-                f"{current_player.pokemon.hp}/{current_player.pokemon.max_hp} HP"
-            )
-            print(
-                f"{opponent.pokemon.name}: "
-                f"{opponent.pokemon.hp}/{opponent.pokemon.max_hp} HP"
-            )
+            self.display_turn(current_player, opponent)
 
             if isinstance(current_player, ComputerPlayer):
                 attack = current_player.choose_attack(
@@ -169,3 +157,24 @@ class Game:
         print()
         print(f"Météo : {weather_labels[self.battle.weather]}")
         print(f"Terrain : {terrain_labels[self.battle.terrain]}")
+
+    def display_turn(self, current_player, opponent):
+        print()
+        print("=" * 40)
+        print(f"Tour de {current_player.name}")
+        print("=" * 40)
+
+        self.display_conditions()
+
+        print()
+        print(
+            f"{current_player.pokemon.name} : "
+            f"{current_player.pokemon.hp:g}/"
+            f"{current_player.pokemon.max_hp:g} PV"
+        )
+        print(
+            f"{opponent.pokemon.name} : "
+            f"{opponent.pokemon.hp:g}/"
+            f"{opponent.pokemon.max_hp:g} PV"
+        )
+        print()

@@ -317,3 +317,59 @@ def test_game_displays_weather_and_terrain(monkeypatch, capsys):
 
     assert "Météo : Soleil" in output
     assert "Terrain : Herbeux" in output
+
+def test_full_combat_displays_conditions_damage_and_winner(
+    monkeypatch, capsys
+):
+    thunderbolt = Attack(
+        "Thunderbolt", 20, PokemonType.ELECTRIC
+    )
+    ember = Attack(
+        "Ember", 100, PokemonType.FIRE
+    )
+
+    pikachu = Pokemon(
+        "Pikachu", 100, PokemonType.ELECTRIC, [thunderbolt]
+    )
+    charmander = Pokemon(
+        "Charmander", 100, PokemonType.FIRE, [ember]
+    )
+
+    human = Player("Alan", pikachu)
+
+    computer = ComputerPlayer(
+        "Adversaire",
+        charmander,
+        StrongestAttackStrategy()
+    )
+
+    battle = Battle(
+        DamageCalculator(),
+        weather=Weather.SUN,
+        terrain=Terrain.GRASSY
+    )
+
+    game = Game(human, computer, battle)
+
+    inputs = iter(["1", "1"])
+    monkeypatch.setattr(
+        "builtins.input",
+        lambda _: next(inputs)
+    )
+
+    game.play()
+
+    output = capsys.readouterr().out
+
+    assert "Météo : Soleil" in output
+    assert "Terrain : Herbeux" in output
+
+    assert "Pikachu utilise Thunderbolt !" in output
+    assert "Charmander subit 20 dégâts !" in output
+    assert "Charmander : 80/100 PV" in output
+
+    assert "Charmander utilise Ember !" in output
+    assert "Pikachu subit 100 dégâts !" in output
+    assert "Pikachu : 0/100 PV" in output
+
+    assert "Adversaire gagne le combat !" in output
